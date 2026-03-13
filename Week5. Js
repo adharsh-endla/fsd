@@ -1,0 +1,101 @@
+const express = require('express')
+const bodyParser = require('body-parser')
+const cors = require('cors')
+const path = require('path')
+
+const app = express()
+const PORT = process.env.PORT || 3000
+
+app.use(cors())
+app.use(bodyParser.json())
+app.use(express.static('public'))
+app.use(express.json())
+
+const restaurants = [
+{
+id:1,
+name:"Tasty Bites",
+cuisine:"Italian",
+rating:4.5,
+deliveryTime:"30-40 min",
+image:"/images/restaurant1.jpg",
+menu:[
+{ id:1,name:"Margherita Pizza",price:399,description:"Fresh tomatoes mozzarella basil and olive oil",image:"/images/pizza.jpg"},
+{ id:2,name:"Pasta Carbonara",price:349,description:"Creamy sauce with pancetta and parmesan",image:"/images/pasta.jpg"},
+{ id:3,name:"Tiramisu",price:249,description:"Classic Italian dessert with coffee and mascarpone",image:"/images/tiramisu.jpg"}
+]
+},
+
+{
+id:2,
+name:"Spice Garden",
+cuisine:"Indian",
+rating:4.3,
+deliveryTime:"35-45 min",
+image:"/images/restaurant2.jpg",
+menu:[
+{ id:4,name:"Butter Chicken",price:449,description:"Creamy tomato curry with tender chicken",image:"/images/butter-chicken.jpg"},
+{ id:5,name:"Vegetable Biryani",price:299,description:"Aromatic rice with mixed vegetables and spices",image:"/images/biryani.jpg"},
+{ id:6,name:"Garlic Naan",price:69,description:"Freshly baked bread with garlic and butter",image:"/images/naan.jpg"}
+]
+},
+
+{
+id:3,
+name:"Sushi Master",
+cuisine:"Japanese",
+rating:4.7,
+deliveryTime:"25-35 min",
+image:"/images/restaurant3.jpg",
+menu:[
+{ id:7,name:"California Roll",price:449,description:"Crab avocado and cucumber roll",image:"/images/california-roll.jpg"},
+{ id:8,name:"Salmon Nigiri",price:499,description:"Fresh salmon over pressed sushi rice",image:"/images/salmon-nigiri.jpg"},
+{ id:9,name:"Tempura Udon",price:399,description:"Thick noodles in hot broth with tempura",image:"/images/tempura-udon.jpg"}
+]
+}
+]
+
+app.get('/api/restaurants',(req,res)=>{
+res.json(restaurants)
+})
+
+app.get('/api/restaurants/:id',(req,res)=>{
+const restaurant=restaurants.find(r=>r.id===parseInt(req.params.id))
+if(!restaurant){
+return res.status(404).json({message:"Restaurant not found"})
+}
+res.json(restaurant)
+})
+
+app.post('/api/orders',(req,res)=>{
+
+const {items,totalAmount,customerDetails}=req.body
+
+if(!items||items.length===0){
+return res.status(400).json({error:"No items in order"})
+}
+
+const order={
+id:Date.now(),
+items,
+totalAmount,
+customerDetails,
+status:"pending"
+}
+
+console.log("Received order:",order)
+
+res.status(201).json({
+message:"Order placed successfully!",
+order
+})
+
+})
+
+app.get('/',(req,res)=>{
+res.sendFile(path.join(__dirname,'public','index.html'))
+})
+
+app.listen(PORT,()=>{
+console.log(`Server is running on port ${PORT}`)
+})
