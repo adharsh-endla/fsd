@@ -1,0 +1,26 @@
+var app = angular.module('myApp', [])
+
+app.controller('FormController', function($scope) {
+  $scope.submit = function() {
+    $scope.msg = "Form Submitted"
+  }
+})
+
+<!DOCTYPE html>
+<html ng-app="myApp">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+  <script src="app.js"></script>
+</head>
+
+<body ng-controller="FormController">
+
+  <form ng-submit="submit()">
+    <input type="text" placeholder="Name" required><br><br>
+    <button type="submit">Submit</button>
+  </form>
+
+  <p>{{msg}}</p>
+
+</body>
+</html>
