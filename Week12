@@ -1,0 +1,61 @@
+backend 
+
+const express = require('express')
+const app = express()
+const port = 3000
+
+app.use(express.json())
+
+let students = []
+
+app.get('/students', (req, res) => {
+  res.json(students)
+})
+
+app.post('/students', (req, res) => {
+  students.push(req.body)
+  res.send("Student Added")
+})
+
+app.listen(port, () => {
+  console.log(`Server running at http://localhost:${port}`)
+})
+
+
+frontend 
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+</head>
+
+<body ng-controller="ctrl">
+
+  <input type="text" ng-model="name" placeholder="Name">
+  <button ng-click="add()">Add</button>
+
+  <ul>
+    <li ng-repeat="s in students">{{s.name}}</li>
+  </ul>
+
+<script>
+var app = angular.module('app', [])
+
+app.controller('ctrl', function($scope, $http) {
+
+  $scope.get = function() {
+    $http.get('http://localhost:3000/students')
+      .then(res => $scope.students = res.data)
+  }
+
+  $scope.add = function() {
+    $http.post('http://localhost:3000/students', {name: $scope.name})
+      .then(() => $scope.get())
+  }
+
+  $scope.get()
+})
+</script>
+
+</body>
+</html>
