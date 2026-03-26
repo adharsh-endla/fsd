@@ -1,0 +1,50 @@
+const fs = require('fs')
+
+const filePath = 'sample.txt'
+
+console.log('Starting file write...')
+
+fs.writeFile(filePath, 'Hello, Node.js file operations!', (err) => {
+  if (err) {
+    console.log('Error writing file')
+    return
+  }
+
+  console.log('File written successfully')
+
+  fs.readFile(filePath, 'utf8', (err, data) => {
+    if (err) {
+      console.log('Error reading file')
+      return
+    }
+
+    console.log('File content:', data)
+
+    fs.appendFile(filePath, '\nAppended text', (err) => {
+      if (err) {
+        console.log('Error appending file')
+        return
+      }
+
+      console.log('Text appended')
+
+      fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+          console.log('Error reading updated file')
+          return
+        }
+
+        console.log('Updated content:', data)
+
+        fs.unlink(filePath, (err) => {
+          if (err) {
+            console.log('Error deleting file')
+            return
+          }
+
+          console.log('File deleted')
+        })
+      })
+    })
+  })
+})
